@@ -17,4 +17,4 @@ config :circleci_orb, CircleciOrb.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
-import_config "test.secret.exs"
+import_config "#{Mix.env()}.*.exs"
