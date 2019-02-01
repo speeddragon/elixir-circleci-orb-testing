@@ -7,5 +7,7 @@ defmodule CircleciOrbWeb.Router do
 
   scope "/api", CircleciOrbWeb do
     pipe_through :api
+
+    resources "/users", UserController, except: [:new, :edit]
   end
 end
