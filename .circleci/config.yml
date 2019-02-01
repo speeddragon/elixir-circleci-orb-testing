@@ -67,3 +67,9 @@ orbs:
 
           - store_test_results:
               path: _build/test/lib/hello_phoenix
+
+workflows:
+  build-test-deploy:
+    jobs:
+      - my-orb/build:
+          name: mybuild # best practice is to name each orb job
