@@ -1,0 +1,69 @@
+version: "2.1"
+description: "Build elixir app"
+
+orbs:
+  my-orb:
+    jobs:
+      # Job Name
+      build:
+        parallelism: 1
+        docker:
+          # https://hub.docker.com/r/circleci/elixir
+          - image: circleci/elixir:1.7.3
+            environment:
+              MIX_ENV: test
+          - image: circleci/postgres:10.1-alpine
+            environment:
+              POSTGRES_USER: postgres
+              POSTGRES_DB: app_test
+              POSTGRES_PASSWORD:
+
+        working_directory: ~/app
+
+        steps:
+          - checkout
+
+          - run: mix local.hex --force
+          - run: mix local.rebar --force
+
+          - restore_cache:
+              keys:
+                # TODO: Add project name to cache ?
+                - v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+                - v1-mix-cache-{{ .Branch }}
+                - v1-mix-cache
+          - restore_cache:
+              keys:
+                - v1-build-cache-{{ .Branch }}
+                - v1-build-cache
+
+          # Mix will recompile Erlang files, even if we cache them:
+          # > https://elixirforum.com/t/how-to-cache-erlang-builds-on-ci/14789/15
+          - run: mix do deps.get, compile
+
+          # Save multiple cache to be used in the future to speed up the build.
+          - save_cache:
+              key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+              paths: "deps"
+          - save_cache:
+              key: v1-mix-cache-{{ .Branch }}
+              paths: "deps"
+          - save_cache:
+              key: v1-mix-cache
+              paths: "deps"
+          - save_cache:
+              key: v1-build-cache-{{ .Branch }}
+              paths: "_build"
+          - save_cache:
+              key: v1-build-cache
+              paths: "_build"
+
+          - run:
+              name: Wait for DB
+              command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+          # TODO: Improve this to use mix coveralls
+          - run: mix test
+
+          - store_test_results:
+              path: _build/test/lib/hello_phoenix
