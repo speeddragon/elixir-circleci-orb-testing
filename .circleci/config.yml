@@ -62,8 +62,14 @@ orbs:
               name: Wait for DB
               command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
-          # TODO: Improve this to use mix coveralls
-          - run: mix test
+          # Run tests plus check line, branch Improve this to use mix coveralls ( https://github.com/parroty/excoveralls )
+          - run: mix coveralls
+
+          # Run credo for static code analysis
+          - run: mix credo
+
+          # Run dyalizer (it will take some time on the first run, then it will use cache on folder _build)
+          - run: mix dialyzer
 
           - store_test_results:
               path: _build/test/lib/hello_phoenix

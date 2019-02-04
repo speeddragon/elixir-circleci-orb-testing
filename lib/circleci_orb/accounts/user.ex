@@ -1,7 +1,10 @@
 defmodule CircleciOrb.Accounts.User do
+  @moduledoc """
+  Users
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
-
 
   schema "users" do
     field :email, :string
