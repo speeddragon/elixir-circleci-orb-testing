@@ -11,6 +11,7 @@ defmodule CircleciOrb.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      dialyzer: dialyzer(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         coveralls: :test,
@@ -20,6 +21,12 @@ defmodule CircleciOrb.MixProject do
       ]
       # if you want to use espec,
       # test_coverage: [tool: ExCoveralls, test_task: "espec"]
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_add_apps: [:ex_unit, :mix]
     ]
   end
 
