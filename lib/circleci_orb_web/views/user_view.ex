@@ -11,10 +11,12 @@ defmodule CircleciOrbWeb.UserView do
   end
 
   def render("user.json", %{user: user}) do
-    %{id: user.id,
+    %{
+      id: user.id,
       name: user.name,
       email: user.email,
       password_hash: user.password_hash,
-      is_admin: user.is_admin}
+      is_admin: user.is_admin
+    }
   end
 end

@@ -29,10 +29,12 @@ orbs:
                 - v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
                 - v1-mix-cache-{{ .Branch }}
                 - v1-mix-cache
+
           - restore_cache:
               keys:
                 - v1-build-cache-{{ .Branch }}
                 - v1-build-cache
+
           - restore_cache:
               keys:
                 - v1-local_mix-cache
@@ -44,6 +46,9 @@ orbs:
           # > https://elixirforum.com/t/how-to-cache-erlang-builds-on-ci/14789/15
           - run: mix do deps.get, compile
 
+          # Check if code is formated
+          - run: mix format --check-formatted
+
           # Save multiple cache to be used in the future to speed up the build.
           - save_cache:
               key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
@@ -54,7 +59,9 @@ orbs:
           - save_cache:
               key: v1-mix-cache
               paths: "deps"
-
+          - run:
+              name: "View"
+              command: "ls -lha ~/.mix/"
           - run:
               name: Wait for DB
               command: dockerize -wait tcp://localhost:5432 -timeout 1m
@@ -71,12 +78,19 @@ orbs:
           - save_cache:
               key: v1-build-cache-{{ .Branch }}
               paths: "_build"
+
           - save_cache:
               key: v1-build-cache
               paths: "_build"
+
           - save_cache:
               key: v1-local_mix-cache
               paths: "~/.mix"
+
+          - persist_to_workspace:
+              root: ~/
+              paths:
+                - .mix
 
           - store_test_results:
               path: _build/test/lib/circleci_orb
