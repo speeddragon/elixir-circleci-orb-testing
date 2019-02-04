@@ -36,6 +36,9 @@ orbs:
               keys:
                 - v1-build-cache-{{ .Branch }}
                 - v1-build-cache
+          - restore_cache:
+              keys:
+                - v1-local_mix-cache
 
           # Mix will recompile Erlang files, even if we cache them:
           # > https://elixirforum.com/t/how-to-cache-erlang-builds-on-ci/14789/15
