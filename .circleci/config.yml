@@ -54,15 +54,6 @@ orbs:
           - save_cache:
               key: v1-mix-cache
               paths: "deps"
-          - save_cache:
-              key: v1-build-cache-{{ .Branch }}
-              paths: "_build"
-          - save_cache:
-              key: v1-build-cache
-              paths: "_build"
-          - save_cache:
-              key: v1-local_mix-cache
-              paths: "~/.mix"
 
           - run:
               name: Wait for DB
@@ -77,8 +68,18 @@ orbs:
           # Run dyalizer (it will take some time on the first run, then it will use cache on folder _build)
           - run: mix dialyzer
 
+          - save_cache:
+              key: v1-build-cache-{{ .Branch }}
+              paths: "_build"
+          - save_cache:
+              key: v1-build-cache
+              paths: "_build"
+          - save_cache:
+              key: v1-local_mix-cache
+              paths: "~/.mix"
+
           - store_test_results:
-              path: _build/test/lib/hello_phoenix
+              path: _build/test/lib/circleci_orb
 
 workflows:
   build-test-deploy:
