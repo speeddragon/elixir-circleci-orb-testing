@@ -23,9 +23,6 @@ orbs:
         steps:
           - checkout
 
-          - run: mix local.hex --force
-          - run: mix local.rebar --force
-
           - restore_cache:
               keys:
                 # TODO: Add project name to cache ?
@@ -39,6 +36,9 @@ orbs:
           - restore_cache:
               keys:
                 - v1-local_mix-cache
+
+          - run: mix local.hex --force
+          - run: mix local.rebar --force
 
           # Mix will recompile Erlang files, even if we cache them:
           # > https://elixirforum.com/t/how-to-cache-erlang-builds-on-ci/14789/15
