@@ -23,6 +23,8 @@ orbs:
         steps:
           - checkout
 
+          - run: printenv
+
           - restore_cache:
               keys:
                 # TODO: Add project name to cache ?
