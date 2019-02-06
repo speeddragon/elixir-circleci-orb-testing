@@ -95,8 +95,39 @@ orbs:
           - store_test_results:
               path: _build/test/lib/circleci_orb
 
+      deploy:
+        parameters:
+          branch:
+            type: string
+        parallelism: 1
+        docker:
+          # https://hub.docker.com/r/circleci/elixir
+          - image: circleci/elixir:1.7.3
+            environment:
+              MIX_ENV: test
+          - image: circleci/postgres:10.1-alpine
+            environment:
+              POSTGRES_USER: postgres
+              POSTGRES_DB: app_test
+              POSTGRES_PASSWORD:
+
+        working_directory: ~/app
+
+        steps:
+          - run: |
+              echo "Branch: << parameters.branch >>"
 workflows:
   build-test-deploy:
     jobs:
       - my-orb/build:
           name: mybuild # best practice is to name each orb job
+      - my-orb/deploy:
+          branch: master
+          filters:
+            branches:
+              only: master
+      - my-orb/deploy:
+          branch: new
+          filters:
+            branches:
+              only: new
