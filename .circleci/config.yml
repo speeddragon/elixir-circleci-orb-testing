@@ -123,11 +123,15 @@ workflows:
           name: mybuild # best practice is to name each orb job
       - my-orb/deploy:
           branch: master
+          requires:
+            - mybuild
           filters:
             branches:
               only: master
       - my-orb/deploy:
           branch: new
+          requires:
+            - mybuild
           filters:
             branches:
               only: new
