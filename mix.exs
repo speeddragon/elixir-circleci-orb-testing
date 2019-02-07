@@ -59,7 +59,12 @@ defmodule CircleciOrb.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0.0-rc.4", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:ex_machina, "~> 2.2", only: :test},
+      {:comeonin, "~> 4.1"},
+      {:argon2_elixir, "~> 1.3"},
+      {:pbkdf2_elixir, "~> 0.12"},
+      {:bcrypt_elixir, "~> 1.1"}
     ]
   end
 
