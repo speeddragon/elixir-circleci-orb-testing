@@ -1,4 +1,8 @@
 defmodule CircleciOrb.Posts.Post do
+  @moduledoc """
+  User posts
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

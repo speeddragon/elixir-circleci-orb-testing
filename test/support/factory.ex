@@ -1,4 +1,7 @@
 defmodule CircleciOrb.Factory do
+  @moduledoc """
+  Default mocks objects
+  """
   # with Ecto
   use ExMachina.Ecto, repo: CircleciOrb.Repo
 
