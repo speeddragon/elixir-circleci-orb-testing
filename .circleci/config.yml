@@ -13,3 +13,8 @@ jobs:
       - elixir/coveralls
       - elixir/credo
       - elixir/dialyzer
+      
+workflows:
+  elixir-build-deploy-example:
+    jobs:
+      - build-and-test
