@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  elixir: coletiv/elixir@dev:first
+  elixir: coletiv/elixir@0.0.1
 jobs:
   build-and-test:
     executor: default
