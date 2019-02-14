@@ -3,12 +3,8 @@ orbs:
   elixir: coletiv/elixir@0.0.1
 jobs:
   build-and-test:
-    executor: default
     steps:
       - elixir/build
-
-      # FUTURE: This only need to run if the job is a PULL REQUEST, but the feature isn't available yet
-      # https://discuss.circleci.com/t/use-environment-variables-in-parameters/26314/5
       - elixir/check-format
       - elixir/coveralls
       - elixir/credo
