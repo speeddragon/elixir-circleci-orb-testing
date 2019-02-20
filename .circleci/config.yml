@@ -1,123 +1,18 @@
-version: "2.1"
-description: "Build elixir app"
-
+version: 2.1
 orbs:
-  my-orb:
-    jobs:
-      # Job Name
-      build:
-        parallelism: 1
-        docker:
-          # https://hub.docker.com/r/circleci/elixir
-          - image: circleci/elixir:1.7.3
-            environment:
-              MIX_ENV: test
-          - image: circleci/postgres:10.1-alpine
-            environment:
-              POSTGRES_USER: postgres
-              POSTGRES_DB: app_test
-              POSTGRES_PASSWORD:
-
-        working_directory: ~/app
-
-        steps:
-          - checkout
-
-          - run: printenv
-
-          - restore_cache:
-              keys:
-                # TODO: Add project name to cache ?
-                - v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
-                - v1-mix-cache-{{ .Branch }}
-                - v1-mix-cache
-
-          - restore_cache:
-              keys:
-                - v1-build-cache-{{ .Branch }}
-                - v1-build-cache
-
-          - restore_cache:
-              keys:
-                - v1-local_mix-cache-{{ .Branch }}
-
-          - run: mix local.hex --force
-          - run: mix local.rebar --force
-
-          # Mix will recompile Erlang files, even if we cache them:
-          # > https://elixirforum.com/t/how-to-cache-erlang-builds-on-ci/14789/15
-          - run: mix do deps.get, compile
-
-          # Check if code is formated
-          - run: mix format --check-formatted
-
-          # Save multiple cache to be used in the future to speed up the build.
-          - save_cache:
-              key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
-              paths: "deps"
-          - save_cache:
-              key: v1-mix-cache-{{ .Branch }}
-              paths: "deps"
-          - save_cache:
-              key: v1-mix-cache
-              paths: "deps"
-
-          - run:
-              name: Wait for DB
-              command: dockerize -wait tcp://localhost:5432 -timeout 1m
-
-          # Run tests plus check line, branch Improve this to use mix coveralls ( https://github.com/parroty/excoveralls )
-          - run: mix coveralls
-
-          # Run credo for static code analysis
-          - run: mix credo
-
-          # Run dyalizer (it will take some time on the first run, then it will use cache on folder _build)
-          - run: mix dialyzer
-
-          - save_cache:
-              key: v1-build-cache-{{ .Branch }}
-              paths: "_build"
-
-          - save_cache:
-              key: v1-build-cache
-              paths: "_build"
-
-          - save_cache:
-              key: v1-local_mix-cache-{{ .Branch }}
-              paths: "~/.mix"
-
-          - persist_to_workspace:
-              root: ~/
-              paths:
-                - .mix
-
-          - store_test_results:
-              path: _build/test/lib/circleci_orb
-
-      deploy:
-        parameters:
-          branch:
-            type: string
-        parallelism: 1
-        docker:
-          # https://hub.docker.com/r/circleci/elixir
-          - image: circleci/elixir:1.7.3
-            environment:
-              MIX_ENV: test
-          - image: circleci/postgres:10.1-alpine
-            environment:
-              POSTGRES_USER: postgres
-              POSTGRES_DB: app_test
-              POSTGRES_PASSWORD:
-
-        working_directory: ~/app
-
-        steps:
-          - run: |
-              echo "Branch: << parameters.branch >>"
+  elixir: coletiv/elixir@0.0.1
+jobs:
+  build-and-test:
+    executor: elixir/default
+    steps:
+      - elixir/build
+      - elixir/check-format
+      - elixir/coveralls
+      - elixir/credo
+      - elixir/dialyzer
+      
 workflows:
-  build-test-deploy:
+  elixir-build-deploy-example:
     jobs:
       - my-orb/build:
           name: mybuild # best practice is to name each orb job
