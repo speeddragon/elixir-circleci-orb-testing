@@ -9,6 +9,10 @@ config :circleci_orb, CircleciOrbWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
+config :argon2_elixir, t_cost: 2, m_cost: 8
+config :bcrypt_elixir, log_rounds: 4
+config :pbkdf2_elixir, rounds: 1
+
 # Configure your database
 config :circleci_orb, CircleciOrb.Repo,
   username: "postgres",
