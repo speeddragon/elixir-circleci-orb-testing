@@ -10,23 +10,25 @@ jobs:
       - elixir/coveralls
       - elixir/credo
       - elixir/dialyzer
-      
+  deploy:
+    executor: elixir/default
+    parameters:
+      branch:
+        type: string
+    steps:
+      - run: |
+          echo "Branch: << parameters.branch >>"
 workflows:
   elixir-build-deploy-example:
     jobs:
-      - my-orb/build:
-          name: mybuild # best practice is to name each orb job
-      - my-orb/deploy:
+      - build-and-test
+      - deploy:
+          branch: develop
+          filters:
+            branches:
+              only: develop
+      - deploy:
           branch: master
-          requires:
-            - mybuild
           filters:
             branches:
               only: master
-      - my-orb/deploy:
-          branch: new
-          requires:
-            - mybuild
-          filters:
-            branches:
-              only: new
